@@ -36,6 +36,30 @@ services:
     command: etcd --advertise-client-urls http://simulator-etcd:2379 --data-dir /var/lib/etcd --listen-client-urls http://0.0.0.0:2379 --initial-cluster-state new --initial-cluster-token tkn
     networks:
       - simulator-internal-network
+  firmament: 
+    command: [/firmament/build/src/firmament_scheduler, --flagfile=/firmament/config/firmament_scheduler_cpu_mem.cfg]
+    image: huaweifirmament/firmament:latest
+    restart: always
+    container_name: firmament-service.kube-system
+    ports:
+      - "9090:9090"
+    networks:
+      - simulator-internal-network   
+  poseidon:
+    depends_on:
+        - firmament
+    command: [/poseidon, --logtostderr, --kubeConfig=/config/kubeconfig.cfg, --kubeVersion=1.6]
+    volumes:
+      - ./kubeconfig/:/config/
+    image: huaweiposeidon/poseidon:latest
+    restart: always
+    container_name: poseidon
+    networks:
+      - simulator-internal-network
+    environment:
+      - KUBERNETES_SERVICE_HOST=localhost
+      - KUBERNETES_SERVICE_PORT=3131
+
 volumes:
   simulator-etcd-data:
 networks:
