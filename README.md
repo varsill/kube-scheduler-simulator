@@ -58,8 +58,8 @@ make docker_build_and_up
 
 Then, you can access the simulator with http://localhost:3000
 
-Note: Insufficient memory allocation sometimes causes problems in building the image.
-Please allocate enough memory in that case.
+Note: Insufficient memory allocation in the docker environment settings sometimes causes problems in building the image.
+Please increase memory limit in that case.
 
 ### Run Locally
 
